@@ -7,13 +7,20 @@ import time
 import psycopg2
 
 
+DEBUG=1 if os.environ.get('DEBUG') else 0
+
 def open_db(dbname):
+    if DEBUG > 0:
+        print(f"Connecting: postgresql://{os.environ['POSTGRES_USER']}@{os.environ['POSTGRES_HOST']}/{dbname}")
     return psycopg2.connect(user=os.environ["POSTGRES_USER"],
                             password=os.environ["POSTGRES_PWD"],
                             host=os.environ["POSTGRES_HOST"],
                             database=dbname)
 
 def write_db(conn, table, **kwargs):
+    if DEBUG > 0:
+        print(f"Writing to {table}:\n{kwargs}\n")
+
     cursor = conn.cursor()
 
     names = []
@@ -22,7 +29,7 @@ def write_db(conn, table, **kwargs):
         names  += [k]
         values += (v,)
 
-    query = f" INSERT INTO {table} ({','.join(names)}) VALUES ({','.join(['%s'] * len(values))})"
+    query = f" INSERT INTO {table} ({','.join(names)}) VALUES ({','.join(['%s'] * len(values))}) ; "
     cursor.execute(query, values)
 
 def close_db(conn):
