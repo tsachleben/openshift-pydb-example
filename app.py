@@ -7,6 +7,8 @@ import time
 import psycopg2
 
 
+MINUTES=60
+
 DEBUG=1 if os.environ.get('DEBUG') else 0
 
 def open_db(dbname):
@@ -55,7 +57,7 @@ def main():
                      timestamp=time.ctime(),
                      msg="Hello, World!")
             close_db(conn)
-            time.sleep(10*1000)
+            time.sleep(5*MINUTES)
         except InterruptedError:
             pass
     if conn is not None:
